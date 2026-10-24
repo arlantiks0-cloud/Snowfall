@@ -75,8 +75,19 @@ static SnowfallOverlay *snowfallOverlay;
     %orig;
 
     dispatch_async(dispatch_get_main_queue(), ^{
-        UIWindow *window = UIApplication.sharedApplication.keyWindow;
-
+        UIWindow *window = nil;
+for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+    if (scene.activationState == UISceneActivationStateForegroundActive &&
+        [scene isKindOfClass:[UIWindowScene class]]) {
+        for (UIWindow *candidate in ((UIWindowScene *)scene).windows) {
+            if (candidate.isKeyWindow) {
+                window = candidate;
+                break;
+            }
+        }
+    }
+    if (window) break;
+}
         if (!window || snowfallOverlay) return;
 
         snowfallOverlay = [[SnowfallOverlay alloc]
