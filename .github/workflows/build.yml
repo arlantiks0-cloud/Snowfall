@@ -1,28 +1,43 @@
+
 name: Build Snowfall
 
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Get source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Theos
-        uses: Randomblock1/theos-action@v1
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential fakeroot rsync curl perl zip git libxml2-dev libtinfo6
 
-      - name: Build rootless package
+      - name: Install Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
+          echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+          echo "$HOME/theos/bin" >> "$GITHUB_PATH"
+
+      - name: Install iOS toolchain and SDK
+        run: |
+          "$HOME/theos/bin/install-toolchain"
+          "$HOME/theos/bin/install-sdk"
+
+      - name: Build package
         run: |
           make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 
-      - name: Save Debian package
+      - name: Upload package
         uses: actions/upload-artifact@v4
         with:
           name: Snowfall-deb
           path: packages/*.deb
-          if-no-files-found: error   
+          if-no-files-found: error
+          
