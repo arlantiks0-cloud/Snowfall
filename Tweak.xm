@@ -1,5 +1,8 @@
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+
+static NSString * const SnowfallDomain = @"com.ilya.snowfall";
 
 @interface SnowfallOverlay : UIView
 @property (nonatomic, strong) NSMutableArray<UIView *> *particles;
@@ -14,17 +17,17 @@
 
     if (self) {
         self.backgroundColor = UIColor.clearColor;
+        self.opaque = NO;
         self.userInteractionEnabled = NO;
         self.clipsToBounds = YES;
         self.particles = [NSMutableArray array];
         self.lastSpawnTime = 0;
 
         __weak SnowfallOverlay *weakSelf = self;
-
         self.spawnTimer =
-        [NSTimer scheduledTimerWithTimeInterval:0.05
-                                        repeats:YES
-                                          block:^(NSTimer *timer) {
+            [NSTimer scheduledTimerWithTimeInterval:0.05
+                                            repeats:YES
+                                              block:^(NSTimer *timer) {
             [weakSelf spawnParticle];
         }];
     }
@@ -32,169 +35,233 @@
     return self;
 }
 
-- (NSDictionary *)snowfallPrefs {
-    NSDictionary *prefs = [[NSUserDefaults standardUserDefaults]
-        persistentDomainForName:@"com.ilya.snowfall"];
-
-    return prefs ?: @{};
+- (NSDictionary *)prefs {
+    NSDictionary *domain = [[NSUserDefaults standardUserDefaults]
+        persistentDomainForName:SnowfallDomain];
+    return domain ?: @{};
 }
 
-- (void)spawnParticle {
-    NSDictionary *prefs = [self snowfallPrefs];
+- (CGFloat)valueForKey:(NSString *)key
+               fallback:(CGFloat)fallback {
+    id value = [self prefs][key];
+    if (![value respondsToSelector:@selector(floatValue)]) {
+        return fallback;
+    }
+    return [value floatValue];
+}
 
-    CGFloat size = [prefs[@"ParticleSize"] respondsToSelector:@selector(floatValue)]
-        ? [prefs[@"ParticleSize"] floatValue] : 24.0;
+- (UIBezierPath *)smoothPathFromPoints:(NSArray *)points {
+    UIBezierPath *path = [UIBezierPath bezierPath];
 
-    NSInteger maxParticles =
-        [prefs[@"ParticleCount"] respondsToSelector:@selector(integerValue)]
-        ? [prefs[@"ParticleCount"] integerValue] : 20;
+    if (points.count < 2) return path;
 
-    CGFloat spawnRate =
-        [prefs[@"SpawnRate"] respondsToSelector:@selector(floatValue)]
-        ? [prefs[@"SpawnRate"] floatValue] : 3.0;
+    CGPoint first = [points[0] CGPointValue];
+    [path moveToPoint:first];
 
-    CGFloat fallSpeed =
-        [prefs[@"FallSpeed"] respondsToSelector:@selector(floatValue)]
-        ? [prefs[@"FallSpeed"] floatValue] : 5.0;
+    if (points.count == 2) {
+        [path addLineToPoint:[points[1] CGPointValue]];
+        return path;
+    }
 
+    for (NSUInteger i = 1; i < points.count - 1; i++) {
+        CGPoint current = [points[i] CGPointValue];
+        CGPoint next = [points[i + 1] CGPointValue];
+
+        CGPoint midpoint = CGPointMake(
+            (current.x + next.x) / 2.0,
+            (current.y + next.y) / 2.0
+        );
+
+        [path addQuadCurveToPoint:midpoint controlPoint:current];
+    }
+
+    [path addLineToPoint:[points.lastObject CGPointValue]];
+    return path;
+}
+
+- (NSArray<NSValue *> *)screenPointsFromPrefs:(NSDictionary *)prefs
+                                         size:(CGFloat)size {
+    NSArray *saved = prefs[@"PathPoints"];
+    CGFloat width = CGRectGetWidth(self.bounds);
+    CGFloat height = CGRectGetHeight(self.bounds);
+
+    NSMutableArray<NSValue *> *points = [NSMutableArray array];
+
+    if ([saved isKindOfClass:NSArray.class] && saved.count >= 2) {
+        for (NSArray *pair in saved) {
+            if (![pair isKindOfClass:NSArray.class] || pair.count < 2) {
+                continue;
+            }
+
+            CGFloat x = [pair[0] floatValue] * width;
+            CGFloat y = [pair[1] floatValue] * height;
+
+            x = MAX(size / 2.0, MIN(width - size / 2.0, x));
+            y = MAX(size / 2.0, MIN(height - size / 2.0, y));
+
+            [points addObject:[NSValue valueWithCGPoint:
+                CGPointMake(x, y)]];
+        }
+    }
+
+    if (points.count >= 2) return points;
+
+    // Если редактор ещё не использовался, применяем старую траекторию.
     NSInteger direction =
         [prefs[@"FallDirection"] respondsToSelector:@selector(integerValue)]
         ? [prefs[@"FallDirection"] integerValue] : 0;
 
-    size = MAX(10.0, MIN(size, 50.0));
-    maxParticles = MAX(1, MIN(maxParticles, 100));
-    spawnRate = MAX(1.0, MIN(spawnRate, 20.0));
-    fallSpeed = MAX(1.0, MIN(fallSpeed, 10.0));
+    CGPoint start = CGPointMake(width * 0.15, size / 2.0);
+    CGPoint end = CGPointMake(width * 0.85, height - size / 2.0);
 
-    // Удаляем завершившиеся частицы, если они ещё числятся в массиве.
+    switch (direction) {
+        case 1:
+            start = CGPointMake(width * 0.85, size / 2.0);
+            end = CGPointMake(width * 0.15, height - size / 2.0);
+            break;
+        case 2:
+            start = CGPointMake(width / 2.0, size / 2.0);
+            end = CGPointMake(width / 2.0, height - size / 2.0);
+            break;
+        case 3:
+            start = CGPointMake(size / 2.0, size / 2.0);
+            end = CGPointMake(size / 2.0, height - size / 2.0);
+            break;
+        case 4:
+            start = CGPointMake(width - size / 2.0, size / 2.0);
+            end = CGPointMake(width - size / 2.0,
+                              height - size / 2.0);
+            break;
+        case 5:
+            start = CGPointMake(width / 2.0, size / 2.0);
+            end = CGPointMake(size / 2.0, height - size / 2.0);
+            break;
+        case 6:
+            start = CGPointMake(width / 2.0, size / 2.0);
+            end = CGPointMake(width - size / 2.0,
+                              height - size / 2.0);
+            break;
+        default:
+            break;
+    }
+
+    CGPoint control = CGPointMake(
+        (start.x + end.x) / 2.0 + width * 0.12,
+        height * 0.5
+    );
+
+    return @[
+        [NSValue valueWithCGPoint:start],
+        [NSValue valueWithCGPoint:control],
+        [NSValue valueWithCGPoint:end]
+    ];
+}
+
+- (void)spawnParticle {
+    NSDictionary *prefs = [self prefs];
+
+    CGFloat size = [self valueForKey:@"ParticleSize" fallback:24.0];
+    NSInteger limit = (NSInteger)[self valueForKey:@"ParticleCount"
+                                             fallback:20.0];
+    CGFloat rate = [self valueForKey:@"SpawnRate" fallback:3.0];
+    CGFloat speed = [self valueForKey:@"FallSpeed" fallback:5.0];
+
+    size = MAX(10.0, MIN(size, 50.0));
+    limit = MAX(1, MIN(limit, 100));
+    rate = MAX(1.0, MIN(rate, 20.0));
+    speed = MAX(1.0, MIN(speed, 10.0));
+
+    if (CGRectGetWidth(self.bounds) <= 0 ||
+        CGRectGetHeight(self.bounds) <= 0) {
+        return;
+    }
+
     for (UIView *view in [self.particles copy]) {
         if (view.superview != self) {
             [self.particles removeObject:view];
         }
     }
 
-    // Строгий общий лимит для этого слоя.
-    if (self.particles.count >= maxParticles ||
-        self.bounds.size.width <= 0 ||
-        self.bounds.size.height <= 0) {
-        return;
-    }
+    if (self.particles.count >= limit) return;
 
     NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-    NSTimeInterval spawnInterval = 1.0 / spawnRate;
-
     if (self.lastSpawnTime > 0 &&
-        now - self.lastSpawnTime < spawnInterval) {
+        now - self.lastSpawnTime < (1.0 / rate)) {
         return;
     }
-
     self.lastSpawnTime = now;
 
-    CGFloat width = self.bounds.size.width;
-    CGFloat height = self.bounds.size.height;
+    NSArray<NSValue *> *points =
+        [self screenPointsFromPrefs:prefs size:size];
 
-    CGFloat startX = 0;
-    CGFloat endX = 0;
+    if (points.count < 2) return;
 
-    // 0: слева направо
-    // 1: справа налево
-    // 2: по центру вертикально
-    // 3: слева вниз в левый угол
-    // 4: справа вниз в правый угол
-    // 5: из центра в нижний левый угол
-    // 6: из центра в нижний правый угол
-    switch (direction) {
-        case 1:
-            startX = width - size;
-            endX = 0;
-            break;
-        case 2:
-            startX = (width - size) / 2.0;
-            endX = startX;
-            break;
-        case 3:
-            startX = 0;
-            endX = 0;
-            break;
-        case 4:
-            startX = width - size;
-            endX = width - size;
-            break;
-        case 5:
-            startX = (width - size) / 2.0;
-            endX = 0;
-            break;
-        case 6:
-            startX = (width - size) / 2.0;
-            endX = width - size;
-            break;
-        default:
-            startX = arc4random_uniform(MAX(1, (uint32_t)width));
-            endX = width - size;
-            break;
-    }
+    CGPoint first = points.firstObject.CGPointValue;
+    UIBezierPath *path = [self smoothPathFromPoints:points];
 
-    // Если выбрано направление с разбросом, сохраняем естественное движение.
-    if (direction == 0) {
-        startX = arc4random_uniform(MAX(1, (uint32_t)width));
-        endX = MIN(width - size, startX + width * 0.25);
-    } else if (direction == 1) {
-        startX = width - size;
-        endX = 0;
-    }
-
+    UIView *particle = nil;
     NSString *encoded = prefs[@"CustomImagePNG"];
-    NSData *imageData = nil;
-    UIImage *customImage = nil;
 
     if ([encoded isKindOfClass:NSString.class] && encoded.length > 0) {
-        imageData = [[NSData alloc] initWithBase64EncodedString:encoded
-                                                       options:0];
-        if (imageData) {
-            customImage = [UIImage imageWithData:imageData];
+        NSData *data = [[NSData alloc] initWithBase64EncodedString:encoded
+                                                           options:0];
+        UIImage *image = data ? [UIImage imageWithData:data] : nil;
+
+        if (image) {
+            UIImageView *imageView =
+                [[UIImageView alloc] initWithImage:image];
+            imageView.backgroundColor = UIColor.clearColor;
+            imageView.opaque = NO;
+            imageView.contentMode = UIViewContentModeScaleAspectFit;
+            particle = imageView;
         }
     }
 
-    UIView *particle;
-
-    if (customImage) {
-        UIImageView *imageView =
-            [[UIImageView alloc] initWithImage:customImage];
-        imageView.contentMode = UIViewContentModeScaleAspectFit;
-        imageView.frame = CGRectMake(startX, -size, size, size);
-        particle = imageView;
-    } else {
-        UILabel *label =
-            [[UILabel alloc] initWithFrame:CGRectMake(startX, -size, size, size)];
+    if (!particle) {
+        UILabel *label = [[UILabel alloc] init];
         label.text = @"❄";
         label.font = [UIFont systemFontOfSize:size];
         label.textAlignment = NSTextAlignmentCenter;
         label.backgroundColor = UIColor.clearColor;
+        label.opaque = NO;
         particle = label;
     }
 
+    particle.frame = CGRectMake(first.x - size / 2.0,
+                                first.y - size / 2.0,
+                                size, size);
     particle.userInteractionEnabled = NO;
+
     [self addSubview:particle];
     [self.particles addObject:particle];
 
-    // Чем выше FallSpeed, тем быстрее падение.
-    CGFloat duration = 12.0 / fallSpeed;
-    duration = MAX(0.8, MIN(duration, 12.0));
+    CGFloat duration = 15.0 / speed;
+    duration = MAX(1.5, MIN(duration, 15.0));
 
-    [UIView animateWithDuration:duration
-                          delay:0
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-        particle.frame = CGRectMake(
-            endX,
-            height + size,
-            size,
-            size
-        );
-    } completion:^(BOOL finished) {
-        [self.particles removeObject:particle];
-        [particle removeFromSuperview];
-    }];
+    CAKeyframeAnimation *animation =
+        [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    animation.path = path.CGPath;
+    animation.duration = duration;
+    animation.calculationMode = kCAAnimationPaced;
+    animation.rotationMode = nil;
+    animation.removedOnCompletion = YES;
+
+    [particle.layer addAnimation:animation forKey:@"snowfall.path"];
+
+    __weak UIView *weakParticle = particle;
+    __weak SnowfallOverlay *weakSelf = self;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+        (int64_t)(duration * NSEC_PER_SEC)),
+        dispatch_get_main_queue(), ^{
+            UIView *finished = weakParticle;
+            SnowfallOverlay *overlay = weakSelf;
+
+            if (finished && overlay) {
+                [overlay.particles removeObject:finished];
+                [finished removeFromSuperview];
+            }
+        });
 }
 
 - (void)dealloc {
@@ -210,9 +277,7 @@ static SnowfallOverlay *SnowfallAttach(
     UIViewController *controller,
     SnowfallOverlay *overlay
 ) {
-    if (!controller.isViewLoaded || !controller.view) {
-        return overlay;
-    }
+    if (!controller.isViewLoaded || !controller.view) return overlay;
 
     UIView *parent = controller.view;
 
