@@ -1,40 +1,175 @@
 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
-    <key>cell</key>
-    <string>PSGroupCell</string>
-    <key>label</key>
-    <string>НАПРАВЛЕНИЕ ПАДЕНИЯ</string>
-</dict>
-<dict>
-    <key>cell</key>
-    <string>PSMultiValueCell</string>
-    <key>label</key>
-    <string>Траектория</string>
-    <key>defaults</key>
-    <string>com.ilya.snowfall</string>
-    <key>key</key>
-    <string>FallDirection</string>
-    <key>default</key>
-    <integer>0</integer>
-    <key>titles</key>
+    <key>title</key>
+    <string>Snowfall</string>
+    <key>items</key>
     <array>
-        <string>Слева направо</string>
-        <string>Справа налево</string>
-        <string>По центру</string>
-        <string>В левый угол</string>
-        <string>В правый угол</string>
-        <string>Из центра влево</string>
-        <string>Из центра вправо</string>
-    </array>
-    <key>values</key>
-    <array>
-        <integer>0</integer>
-        <integer>1</integer>
-        <integer>2</integer>
-        <integer>3</integer>
-        <integer>4</integer>
-        <integer>5</integer>
-        <integer>6</integer>
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>ВНЕШНИЙ ВИД</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Размер снежинок</string>
+            <key>min</key>
+            <real>10</real>
+            <key>max</key>
+            <real>50</real>
+            <key>default</key>
+            <real>24</real>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>ParticleSize</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>КОЛИЧЕСТВО</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Снежинок одновременно</string>
+            <key>min</key>
+            <real>1</real>
+            <key>max</key>
+            <real>100</real>
+            <key>default</key>
+            <real>20</real>
+            <key>showValue</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>ParticleCount</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>ЧАСТОТА ПОЯВЛЕНИЯ</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Новых снежинок в секунду</string>
+            <key>min</key>
+            <real>1</real>
+            <key>max</key>
+            <real>20</real>
+            <key>default</key>
+            <real>3</real>
+            <key>showValue</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>SpawnRate</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>СКОРОСТЬ ПАДЕНИЯ</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Скорость</string>
+            <key>min</key>
+            <real>1</real>
+            <key>max</key>
+            <real>10</real>
+            <key>default</key>
+            <real>5</real>
+            <key>showValue</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>FallSpeed</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>НАПРАВЛЕНИЕ ПАДЕНИЯ</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSMultiValueCell</string>
+            <key>label</key>
+            <string>Траектория</string>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>FallDirection</string>
+            <key>default</key>
+            <integer>0</integer>
+            <key>titles</key>
+            <array>
+                <string>Слева направо</string>
+                <string>Справа налево</string>
+                <string>По центру</string>
+                <string>В левый угол</string>
+                <string>В правый угол</string>
+                <string>Из центра влево</string>
+                <string>Из центра вправо</string>
+            </array>
+            <key>values</key>
+            <array>
+                <integer>0</integer>
+                <integer>1</integer>
+                <integer>2</integer>
+                <integer>3</integer>
+                <integer>4</integer>
+                <integer>5</integer>
+                <integer>6</integer>
+            </array>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>СВОЯ КАРТИНКА</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Выбрать PNG из галереи</string>
+            <key>action</key>
+            <string>chooseImage</string>
+            <key>target</key>
+            <string>SnowfallRootListController</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Вернуть обычные снежинки</string>
+            <key>action</key>
+            <string>resetImage</string>
+            <key>target</key>
+            <string>SnowfallRootListController</string>
+        </dict>
     </array>
 </dict>
-</array>
+</plist>
