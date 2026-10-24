@@ -106,34 +106,34 @@
             <key>label</key>
             <string>НАПРАВЛЕНИЕ</string>
         </dict>
-        <dict>
-            <key>cell</key>
-            <string>PSMultiValueCell</string>
-            <key>label</key>
-            <string>Траектория снежинок</string>
-            <key>defaults</key>
-            <string>com.ilya.snowfall</string>
-            <key>key</key>
-            <string>FallDirection</string>
-            <key>default</key>
-            <integer>0</integer>
-            <key>titles</key>
-            <array>
-                <string>Сверху справа вниз влево</string>
-                <string>Сверху слева вниз вправо</string>
-                <string>Из центра прямо вниз</string>
-                <string>Из центра к нижнему левому</string>
-                <string>Из центра к нижнему правому</string>
-            </array>
-            <key>values</key>
-            <array>
-                <integer>1</integer>
-                <integer>0</integer>
-                <integer>2</integer>
-                <integer>5</integer>
-                <integer>6</integer>
-            </array>
-        </dict>
+<dict>
+    <key>cell</key>
+    <string>PSMultiValueCell</string>
+    <key>label</key>
+    <string>Траектория снежинок</string>
+    <key>defaults</key>
+    <string>com.ilya.snowfall</string>
+    <key>key</key>
+    <string>FallDirection</string>
+    <key>default</key>
+    <integer>0</integer>
+    <key>validTitles</key>
+    <array>
+        <string>Сверху слева вниз вправо</string>
+        <string>Сверху справа вниз влево</string>
+        <string>По центру прямо вниз</string>
+        <string>К нижнему левому углу</string>
+        <string>К нижнему правому углу</string>
+    </array>
+    <key>validValues</key>
+    <array>
+        <integer>0</integer>
+        <integer>1</integer>
+        <integer>2</integer>
+        <integer>5</integer>
+        <integer>6</integer>
+    </array>
+</dict>
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
