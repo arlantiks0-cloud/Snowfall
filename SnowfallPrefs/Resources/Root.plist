@@ -1,0 +1,46 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>title</key>
+    <string>Snowfall</string>
+
+    <key>items</key>
+    <array>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Размер снежинок</string>
+            <key>min</key>
+            <real>10</real>
+            <key>max</key>
+            <real>50</real>
+            <key>default</key>
+            <real>24</real>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>ParticleSize</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Количество снежинок</string>
+            <key>min</key>
+            <real>10</real>
+            <key>max</key>
+            <real>100</real>
+            <key>default</key>
+            <real>50</real>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>ParticleCount</string>
+        </dict>
+    </array>
+</dict>
+</plist>
