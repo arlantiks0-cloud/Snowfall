@@ -1,12 +1,9 @@
-name: Build Snowfall
-'on':
-workflow_dispatch:
-push:
+name: Test
+
+on: [push, workflow_dispatch]
 
 jobs:
-build:
-runs-on: ubuntu-22.04
-steps:
-- uses: actions/checkout@v4
-- name: Test YAML
-run: echo "YAML works"
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "It works"
