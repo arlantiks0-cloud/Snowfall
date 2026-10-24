@@ -9,10 +9,18 @@
 
 - (NSArray *)specifiers {
     if (!_specifiers) {
-        _specifiers = [self loadSpecifiersFromPlistName:@"Root"
-                                                  target:self];
+        NSArray *loaded = [self loadSpecifiersFromPlistName:@"Root"
+                                                      target:self];
+        _specifiers = loaded;
     }
-    return _specifiers;
+
+    return _specifiers ?: @[];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.title = @"Snowfall";
+    self.view.backgroundColor = [UIColor systemBackgroundColor];
 }
 
 @end
