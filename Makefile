@@ -9,7 +9,7 @@ BUNDLE_NAME = SnowfallPrefs
 
 Snowfall_FILES = Tweak.xm
 Snowfall_CFLAGS = -fobjc-arc
-Snowfall_FRAMEWORKS = UIKit Foundation
+Snowfall_FRAMEWORKS = UIKit Foundation QuartzCore
 
 SnowfallPrefs_FILES = SnowfallPrefs/SnowfallRootListController.m
 SnowfallPrefs_FRAMEWORKS = UIKit PhotosUI
