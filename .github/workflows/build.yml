@@ -1,33 +1,21 @@
 name: Build Snowfall
 
-'on':
-workflow_dispatch:
-push:
-branches:
-- main
+'on': [push, workflow_dispatch]
 
 jobs:
 build:
 runs-on: ubuntu-22.04
 steps:
-- name: Checkout
-uses: actions/checkout@v4
+- uses: actions/checkout@v4
 
-  - name: Install prerequisites
-    run: |
-      sudo apt-get update
-      sudo apt-get install -y bash curl sudo git build-essential fakeroot rsync perl zip libxml2 libtinfo6
+  - name: Install dependencies
+    run: sudo apt-get update && sudo apt-get install -y git curl build-essential fakeroot rsync perl zip libxml2 libtinfo6
 
   - name: Install Theos
-    run: |
-      git clone --recursive https://github.com/theos/theos.git "$HOME/theos"
-      echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
-      echo "$HOME/theos/bin" >> "$GITHUB_PATH"
-      bash "$HOME/theos/bin/install-theos" || true
+    run: git clone --recursive https://github.com/theos/theos.git "$HOME/theos" && echo "THEOS=$HOME/theos" >> "$GITHUB_ENV" && echo "$HOME/theos/bin" >> "$GITHUB_PATH"
 
-  - name: Build package
-    run: |
-      make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+  - name: Build Snowfall
+    run: make clean package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 
   - name: Upload package
     uses: actions/upload-artifact@v4
