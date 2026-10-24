@@ -12,7 +12,7 @@ Snowfall_CFLAGS = -fobjc-arc
 Snowfall_FRAMEWORKS = UIKit Foundation
 
 SnowfallPrefs_FILES = SnowfallPrefs/SnowfallRootListController.m
-SnowfallPrefs_FRAMEWORKS = UIKit
+SnowfallPrefs_FRAMEWORKS = UIKit PhotosUI
 SnowfallPrefs_PRIVATE_FRAMEWORKS = Preferences
 SnowfallPrefs_INSTALL_PATH = /Library/PreferenceBundles
 SnowfallPrefs_CFLAGS = -fobjc-arc
