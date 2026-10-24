@@ -109,46 +109,24 @@
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
-            <string>НАПРАВЛЕНИЕ ПАДЕНИЯ</string>
+            <string>ТРАЕКТОРИЯ</string>
         </dict>
         <dict>
             <key>cell</key>
-            <string>PSMultiValueCell</string>
+            <string>PSButtonCell</string>
             <key>label</key>
-            <string>Траектория</string>
-            <key>defaults</key>
-            <string>com.ilya.snowfall</string>
-            <key>key</key>
-            <string>FallDirection</string>
-            <key>default</key>
-            <integer>0</integer>
-            <key>titles</key>
-            <array>
-                <string>Слева направо</string>
-                <string>Справа налево</string>
-                <string>По центру</string>
-                <string>В левый угол</string>
-                <string>В правый угол</string>
-                <string>Из центра влево</string>
-                <string>Из центра вправо</string>
-            </array>
-            <key>values</key>
-            <array>
-                <integer>0</integer>
-                <integer>1</integer>
-                <integer>2</integer>
-                <integer>3</integer>
-                <integer>4</integer>
-                <integer>5</integer>
-                <integer>6</integer>
-            </array>
+            <string>Открыть редактор траектории</string>
+            <key>action</key>
+            <string>openPathEditor</string>
+            <key>target</key>
+            <string>SnowfallRootListController</string>
         </dict>
 
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
-            <string>СВОЯ КАРТИНКА</string>
+            <string>ИЗОБРАЖЕНИЕ</string>
         </dict>
         <dict>
             <key>cell</key>
@@ -171,21 +149,5 @@
             <string>SnowfallRootListController</string>
         </dict>
     </array>
-
-<dict>
-    <key>cell</key>
-    <string>PSGroupCell</string>
-    <key>label</key>
-    <string>РЕДАКТОР ДВИЖЕНИЯ</string>
-</dict>
-<dict>
-    <key>cell</key>
-    <string>PSButtonCell</string>
-    <key>label</key>
-    <string>Открыть редактор траектории</string>
-    <key>action</key>
-    <string>openPathEditor</string>
-    <key>target</key>
-    <string>SnowfallRootListController</string>
 </dict>
 </plist>
