@@ -1,4 +1,5 @@
 
+#import <UIKit/UIKit.h>
 #import <Preferences/PSListController.h>
 #import <Preferences/PSSpecifier.h>
 
@@ -7,14 +8,17 @@
 
 @implementation SnowfallRootListController
 
-- (NSArray *)specifiers {
+- (NSMutableArray *)specifiers {
     if (!_specifiers) {
         NSArray *loaded = [self loadSpecifiersFromPlistName:@"Root"
                                                       target:self];
-        _specifiers = loaded;
+
+        _specifiers = loaded
+            ? [loaded mutableCopy]
+            : [NSMutableArray array];
     }
 
-    return _specifiers ?: @[];
+    return _specifiers;
 }
 
 - (void)viewDidLoad {
