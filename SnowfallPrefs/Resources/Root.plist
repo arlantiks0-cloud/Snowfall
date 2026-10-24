@@ -171,5 +171,21 @@
             <string>SnowfallRootListController</string>
         </dict>
     </array>
+
+<dict>
+    <key>cell</key>
+    <string>PSGroupCell</string>
+    <key>label</key>
+    <string>РЕДАКТОР ДВИЖЕНИЯ</string>
+</dict>
+<dict>
+    <key>cell</key>
+    <string>PSButtonCell</string>
+    <key>label</key>
+    <string>Открыть редактор траектории</string>
+    <key>action</key>
+    <string>openPathEditor</string>
+    <key>target</key>
+    <string>SnowfallRootListController</string>
 </dict>
 </plist>
