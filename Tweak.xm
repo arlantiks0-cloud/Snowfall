@@ -9,26 +9,25 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-
     if (self) {
         self.backgroundColor = UIColor.clearColor;
         self.userInteractionEnabled = NO;
         self.clipsToBounds = YES;
         self.particles = [NSMutableArray array];
 
-        self.spawnTimer =
-        [NSTimer scheduledTimerWithTimeInterval:0.15
-                                        repeats:YES
-                                          block:^(NSTimer *timer) {
-            [self spawnParticle];
-        }];
+        __weak SnowfallOverlay *weakSelf = self;
+        self.spawnTimer = [NSTimer scheduledTimerWithTimeInterval:0.15
+            repeats:YES
+            block:^(NSTimer *timer) {
+                [weakSelf spawnParticle];
+            }];
     }
-
     return self;
 }
 
 - (void)spawnParticle {
-    if (self.particles.count >= 50) return;
+    if (self.particles.count >= 50 || self.bounds.size.width <= 0)
+        return;
 
     CGFloat size = 24.0;
     CGFloat x = arc4random_uniform(
@@ -50,54 +49,68 @@
     CGFloat drift = (CGFloat)arc4random_uniform(101) - 50.0;
 
     [UIView animateWithDuration:duration
-                          delay:0
-                        options:UIViewAnimationOptionCurveLinear
-                     animations:^{
-        particle.frame = CGRectMake(
-            x + drift,
-            self.bounds.size.height + size,
-            size,
-            size
-        );
-    } completion:^(BOOL finished) {
-        [self.particles removeObject:particle];
-        [particle removeFromSuperview];
-    }];
+        delay:0
+        options:UIViewAnimationOptionCurveLinear
+        animations:^{
+            particle.frame = CGRectMake(
+                x + drift, self.bounds.size.height + size, size, size
+            );
+        }
+        completion:^(BOOL finished) {
+            [self.particles removeObject:particle];
+            [particle removeFromSuperview];
+        }];
+}
+
+- (void)dealloc {
+    [self.spawnTimer invalidate];
 }
 
 @end
 
-static SnowfallOverlay *snowfallOverlay;
+static SnowfallOverlay *homeSnowfall;
+static SnowfallOverlay *lockSnowfall;
 
-%hook SpringBoard
+static void SnowfallAttach(UIViewController *controller,
+                           SnowfallOverlay **overlay) {
+    if (!controller.isViewLoaded || !controller.view)
+        return;
 
-- (void)applicationDidFinishLaunching:(id)application {
-    %orig;
+    UIView *parent = controller.view;
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        UIWindow *window = nil;
-for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
-    if (scene.activationState == UISceneActivationStateForegroundActive &&
-        [scene isKindOfClass:[UIWindowScene class]]) {
-        for (UIWindow *candidate in ((UIWindowScene *)scene).windows) {
-            if (candidate.isKeyWindow) {
-                window = candidate;
-                break;
-            }
-        }
-    }
-    if (window) break;
-}
-        if (!window || snowfallOverlay) return;
-
-        snowfallOverlay = [[SnowfallOverlay alloc]
-            initWithFrame:window.bounds];
-
-        snowfallOverlay.autoresizingMask =
+    if (!*overlay) {
+        *overlay = [[SnowfallOverlay alloc] initWithFrame:parent.bounds];
+        (*overlay).autoresizingMask =
             UIViewAutoresizingFlexibleWidth |
             UIViewAutoresizingFlexibleHeight;
+    }
 
-        [window addSubview:snowfallOverlay];
+    if ((*overlay).superview != parent) {
+        [(*overlay) removeFromSuperview];
+        [parent insertSubview:(*overlay) atIndex:0];
+    }
+
+    (*overlay).frame = parent.bounds;
+    [parent sendSubviewToBack:(*overlay)];
+}
+
+%hook SBHomeScreenViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        SnowfallAttach(self, &homeSnowfall);
+    });
+}
+
+%end
+
+%hook CSCoverSheetViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        SnowfallAttach(self, &lockSnowfall);
     });
 }
 
