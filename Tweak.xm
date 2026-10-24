@@ -93,3 +93,23 @@ static void SnowfallAttach(UIViewController *controller,
     (*overlay).frame = parent.bounds;
     [parent sendSubviewToBack:(*overlay)];
 }
+
+
+
+%hook SBHomeScreenViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    SnowfallAttach((UIViewController *)self, &homeSnowfall);
+}
+
+%end
+
+%hook CSCoverSheetViewController
+
+- (void)viewDidAppear:(BOOL)animated {
+    %orig;
+    SnowfallAttach((UIViewController *)self, &lockSnowfall);
+}
+
+%end
