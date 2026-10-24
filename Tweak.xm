@@ -47,7 +47,7 @@
     [self.particles addObject:particle];
 
     CGFloat duration = 5.0 + arc4random_uniform(400) / 100.0;
-    CGFloat drift = (arc4random_uniform(101) - 50);
+    CGFloat drift = (CGFloat)arc4random_uniform(101) - 50.0;
 
     [UIView animateWithDuration:duration
                           delay:0
