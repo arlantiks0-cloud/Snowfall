@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -29,7 +28,6 @@
             <key>key</key>
             <string>ParticleSize</string>
         </dict>
-
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
@@ -54,7 +52,6 @@
             <key>key</key>
             <string>ParticleCount</string>
         </dict>
-
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
@@ -79,7 +76,6 @@
             <key>key</key>
             <string>SpawnRate</string>
         </dict>
-
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
@@ -104,24 +100,40 @@
             <key>key</key>
             <string>FallSpeed</string>
         </dict>
-
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
             <key>label</key>
-            <string>ТРАЕКТОРИЯ</string>
+            <string>НАПРАВЛЕНИЕ</string>
         </dict>
         <dict>
             <key>cell</key>
-            <string>PSButtonCell</string>
+            <string>PSMultiValueCell</string>
             <key>label</key>
-            <string>Открыть редактор траектории</string>
-            <key>action</key>
-            <string>openPathEditor</string>
-            <key>target</key>
-            <string>SnowfallRootListController</string>
+            <string>Траектория снежинок</string>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>FallDirection</string>
+            <key>default</key>
+            <integer>0</integer>
+            <key>titles</key>
+            <array>
+                <string>Сверху справа вниз влево</string>
+                <string>Сверху слева вниз вправо</string>
+                <string>Из центра прямо вниз</string>
+                <string>Из центра к нижнему левому</string>
+                <string>Из центра к нижнему правому</string>
+            </array>
+            <key>values</key>
+            <array>
+                <integer>1</integer>
+                <integer>0</integer>
+                <integer>2</integer>
+                <integer>5</integer>
+                <integer>6</integer>
+            </array>
         </dict>
-
         <dict>
             <key>cell</key>
             <string>PSGroupCell</string>
