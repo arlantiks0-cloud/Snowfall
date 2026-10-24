@@ -99,8 +99,7 @@ static void SnowfallAttach(UIViewController *controller,
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     dispatch_async(dispatch_get_main_queue(), ^{
-        SnowfallAttach(self, &homeSnowfall);
-    });
+        SnowfallAttach((UIViewController *)self, &homeSnowfall);
 }
 
 %end
@@ -110,8 +109,7 @@ static void SnowfallAttach(UIViewController *controller,
 - (void)viewDidAppear:(BOOL)animated {
     %orig;
     dispatch_async(dispatch_get_main_queue(), ^{
-        SnowfallAttach(self, &lockSnowfall);
-    });
+        SnowfallAttach((UIViewController *)self, &lockSnowfall);
 }
 
 %end
