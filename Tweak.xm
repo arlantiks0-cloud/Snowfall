@@ -31,12 +31,22 @@
 }
 
 - (void)spawnParticle {
-    if (self.particles.count >= 50 ||
+    NSDictionary *prefs = [[NSUserDefaults standardUserDefaults]
+        persistentDomainForName:@"com.ilya.snowfall"];
+
+    CGFloat size = [prefs[@"ParticleSize"] respondsToSelector:@selector(floatValue)]
+        ? [prefs[@"ParticleSize"] floatValue] : 24.0;
+
+    NSInteger maxParticles = [prefs[@"ParticleCount"] respondsToSelector:@selector(integerValue)]
+        ? [prefs[@"ParticleCount"] integerValue] : 50;
+
+    size = MAX(10.0, MIN(size, 50.0));
+    maxParticles = MAX(10, MIN(maxParticles, 100));
+
+    if (self.particles.count >= maxParticles ||
         self.bounds.size.width <= 0) {
         return;
     }
-
-    CGFloat size = 24.0;
 
     CGFloat x = arc4random_uniform(
         MAX(1, (uint32_t)self.bounds.size.width)
