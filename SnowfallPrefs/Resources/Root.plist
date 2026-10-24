@@ -10,6 +10,12 @@
     <array>
         <dict>
             <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>ВНЕШНИЙ ВИД</string>
+        </dict>
+        <dict>
+            <key>cell</key>
             <string>PSSliderCell</string>
             <key>label</key>
             <string>Размер снежинок</string>
@@ -27,19 +33,104 @@
 
         <dict>
             <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>КОЛИЧЕСТВО</string>
+        </dict>
+        <dict>
+            <key>cell</key>
             <string>PSSliderCell</string>
             <key>label</key>
-            <string>Количество снежинок</string>
+            <string>Снежинок одновременно</string>
             <key>min</key>
-            <real>10</real>
+            <real>1</real>
             <key>max</key>
             <real>100</real>
             <key>default</key>
-            <real>50</real>
+            <real>20</real>
+            <key>showValue</key>
+            <true/>
             <key>defaults</key>
             <string>com.ilya.snowfall</string>
             <key>key</key>
             <string>ParticleCount</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>ЧАСТОТА ПОЯВЛЕНИЯ</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Новых снежинок в секунду</string>
+            <key>min</key>
+            <real>1</real>
+            <key>max</key>
+            <real>20</real>
+            <key>default</key>
+            <real>3</real>
+            <key>showValue</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>SpawnRate</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>СКОРОСТЬ ПАДЕНИЯ</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSSliderCell</string>
+            <key>label</key>
+            <string>Скорость</string>
+            <key>min</key>
+            <real>1</real>
+            <key>max</key>
+            <real>10</real>
+            <key>default</key>
+            <real>5</real>
+            <key>showValue</key>
+            <true/>
+            <key>defaults</key>
+            <string>com.ilya.snowfall</string>
+            <key>key</key>
+            <string>FallSpeed</string>
+        </dict>
+
+        <dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>label</key>
+            <string>СВОЯ КАРТИНКА</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Выбрать PNG из галереи</string>
+            <key>action</key>
+            <string>chooseImage</string>
+            <key>target</key>
+            <string>SnowfallRootListController</string>
+        </dict>
+        <dict>
+            <key>cell</key>
+            <string>PSButtonCell</string>
+            <key>label</key>
+            <string>Вернуть обычные снежинки</string>
+            <key>action</key>
+            <string>resetImage</string>
+            <key>target</key>
+            <string>SnowfallRootListController</string>
         </dict>
     </array>
 </dict>
